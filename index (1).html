@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Book a Consultation</title>
+<link rel="stylesheet" href="style.css" />
+<!-- FullCalendar v6 (MIT) -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<!-- qrcodejs (MIT) for the UPI QR on desktop -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== Left: branding + steps ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="avatar">AC</div>
+      <div>
+        <h1>RRK Consulting</h1>
+        <p class="muted">1:1 Strategy Session</p>
+      </div>
+    </div>
+
+    <ol class="steps" id="stepIndicator">
+      <li data-step="1" class="active"><span class="dot">1</span> Choose duration</li>
+      <li data-step="2"><span class="dot">2</span> Date &amp; time</li>
+      <li data-step="3"><span class="dot">3</span> Your details</li>
+      <li data-step="4"><span class="dot">4</span> Payment (UPI)</li>
+      <li data-step="5"><span class="dot">5</span> Confirmed 🎉</li>
+    </ol>
+
+    <div class="sidebar-foot muted">
+      Powered by open-source · <a href="https://vercel.com" target="_blank" rel="noopener">Deploy on Vercel</a>
+    </div>
+  </aside>
+
+  <!-- ===== Right: wizard panels ===== -->
+  <main class="main">
+
+    <!-- STEP 1 : Duration -->
+    <section class="panel active" id="panel-1">
+      <h2>How long do you need?</h2>
+      <p class="muted">Pick a session length. You can change it later.</p>
+      <div class="duration-grid">
+        <button class="duration-card" data-duration="15">
+          <strong>15 min</strong>
+          <span>Quick consult</span>
+          <em id="price-15">₹499</em>
+        </button>
+        <button class="duration-card" data-duration="30">
+          <strong>30 min</strong>
+          <span>Deep-dive session</span>
+          <em id="price-30">₹999</em>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 2 : Calendar + slots -->
+    <section class="panel" id="panel-2">
+      <h2>Pick a date &amp; time</h2>
+      <p class="muted">All times shown in your local timezone.</p>
+      <div class="cal-wrap">
+        <div id="calendar"></div>
+        <div class="slots-col">
+          <h3 id="slotsTitle">Select a date</h3>
+          <div id="slots" class="slots"><p class="muted">Available slots will appear here.</p></div>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn ghost" data-goto="1">← Back</button>
+      </div>
+    </section>
+
+    <!-- STEP 3 : Details form -->
+    <section class="panel" id="panel-3">
+      <h2>Your details</h2>
+      <p class="muted">We'll send the meeting link to your email.</p>
+      <div class="summary-chip" id="summaryChip"></div>
+      <form id="detailsForm" novalidate>
+        <label>Full name *
+          <input type="text" name="name" placeholder="Jane Doe" required />
+        </label>
+        <label>Company
+          <input type="text" name="company" placeholder="Acme Inc." />
+        </label>
+        <label>Email *
+          <input type="email" name="email" placeholder="jane@acme.com" required />
+        </label>
+        <label>Phone *
+          <input type="tel" name="phone" placeholder="+91 98765 43210" required />
+        </label>
+        <p class="error" id="formError"></p>
+        <div class="nav">
+          <button type="button" class="btn ghost" data-goto="2">← Back</button>
+          <button type="submit" class="btn primary">Continue to payment →</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- STEP 4 : Payment -->
+    <section class="panel" id="panel-4">
+      <h2>Pay via UPI</h2>
+      <p class="muted">Scan the QR or tap the button (mobile). Amount: <strong id="payAmount"></strong></p>
+
+      <div class="pay-box">
+        <div id="qr"></div>
+        <p class="muted small" id="upiString"></p>
+        <a id="upiLink" href="#">
+          <button class="btn primary big">Pay via UPI app</button>
+        </a>
+      </div>
+
+      <div class="verify-box">
+        <h3>Confirm your payment</h3>
+        <p class="muted small">Since UPI has no automatic callback, paste your <strong>UPI Transaction ID</strong> and/or attach the payment screenshot. We verify and confirm manually (or wire Razorpay webhooks later — see api/confirm.js).</p>
+        <form id="payForm">
+          <label>UPI Transaction ID (UTR)
+            <input type="text" name="txnId" placeholder="e.g. 402193857241" />
+          </label>
+          <label>Payment screenshot
+            <input type="file" name="screenshot" accept="image/*" />
+          </label>
+          <p class="error" id="payError"></p>
+          <div class="nav">
+            <button type="button" class="btn ghost" data-goto="3">← Back</button>
+            <button type="submit" class="btn primary">I've paid — verify &amp; confirm</button>
+          </div>
+        </form>
+        <p class="muted small">Demo mode: verification is auto-approved by the serverless function.</p>
+      </div>
+    </section>
+
+    <!-- STEP 5 : Confirmed -->
+    <section class="panel center" id="panel-5">
+      <div class="check">✓</div>
+      <h2>Booking confirmed!</h2>
+      <p class="muted" id="confirmMsg"></p>
+      <div class="summary-chip" id="finalSummary"></div>
+      <button class="btn primary" id="bookAgain">Book another slot</button>
+    </section>
+
+  </main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
